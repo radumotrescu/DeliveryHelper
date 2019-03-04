@@ -14,8 +14,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   })
 
-  Restaurant.associate = function (models) {
-  }
-
   return Restaurant
 }

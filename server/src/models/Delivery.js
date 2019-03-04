@@ -7,6 +7,9 @@ module.exports = (sequelize, DataTypes) => {
     phoneNumber:{
       type: DataTypes.STRING,
       unique: true
+    },
+    status:{
+      type: DataTypes.SMALLINT
     }
   })
 
