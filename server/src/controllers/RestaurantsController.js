@@ -10,5 +10,17 @@ module.exports = {
         error: 'Unspecified error.'
       })
     }
-  }
+  },
+
+  async index(req, res) {
+    try {
+      let restaurants = null
+      restaurants = await Restaurant.findAll()
+      res.send(restaurants)
+    } catch (err) {
+      res.status(500).send({
+        error: 'an error has occured trying to fetch the restaurants'
+      })
+    }
+  },
 }

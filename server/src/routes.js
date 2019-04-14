@@ -18,9 +18,12 @@ module.exports = (app) => {
     DeliveriesController.index)
   app.put('/delivery/:deliveryId',
     DeliveriesController.update)
+  app.delete('/delivery/:deliveryId',
+    DeliveriesController.delete)
 
   app.post('/restaurant',
     RestaurantsController.insert)
-
+  app.get('/restaurant',
+    RestaurantsController.index)
 
 }

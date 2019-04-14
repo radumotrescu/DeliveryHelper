@@ -28,7 +28,7 @@ module.exports = {
       let deliveries = null
       deliveries = await Delivery.findAll({
         limit: 10,
-        include:[ {model: Restaurant}]
+        include: [{ model: Restaurant }]
       })
       res.send(deliveries)
     } catch (err) {
@@ -50,6 +50,15 @@ module.exports = {
       res.status(500).send({
         error: 'an error occurred when trying to update a delivery'
       })
+    }
+  },
+
+  async delete(req, res) {
+    try {
+      response = await Delivery.destroy({ where: { id: req.params.deliveryId } })
+      res.send({number : response.toString()})
+    } catch (err) {
+      res.status(500).send({ error: 'an error occured when trying to delete a delivery' })
     }
   }
 }
