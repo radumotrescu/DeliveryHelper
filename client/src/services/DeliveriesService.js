@@ -6,7 +6,7 @@ export default {
   },
 
   updateDelivery(deliveryId, delivery) {
-    return Api().put(`delivery/ ${deliveryId} `, delivery);
+    return Api().put(`delivery/${deliveryId} `, delivery);
   },
 
   insertDelivery(delivery) {

@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <router-link to="/register" tag="v-btn">
+      <a>Go to Restaurants</a>
+    </router-link>
     <v-app id="deliveryHelper">
       <v-toolbar flat color="white">
         <v-toolbar-title>My Deliveries</v-toolbar-title>
@@ -77,7 +80,7 @@
             <td class="text-xs-right">{{ props.item.address }}</td>
             <td class="text-xs-right">{{ props.item.phoneNumber }}</td>
             <td class="text-xs-right">{{ props.item.Restaurant.address }}</td>
-            <td class="text-xs">{{ props.item.status }}</td>
+            <td class="text-xs">{{ transformStatusId(props.item.status) }}</td>
             <td class="justify-center layout px-0">
               <v-icon center small class="mr-2" @click="editItem(props.item)">
                 edit
@@ -175,6 +178,22 @@ export default {
       else if (status === 1) return bC + "#7986CB";
       // indigo lighten-2
       return bC + "transparent";
+    },
+
+    transformStatusId(statusId) {
+      switch (statusId) {
+        case 0:
+          return "Inregistrata";
+
+        case 1:
+          return "In primire";
+
+        case 2:
+          return "In livrare";
+
+        case 3:
+          return "Livrata";
+      }
     },
 
     findRestaurantAddressById(restaurantId) {
