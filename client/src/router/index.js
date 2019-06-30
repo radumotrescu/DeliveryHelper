@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import Register from '@/components/Register'
 import Deliveries from '@/components/Deliveries'
+import Restaurants from '@/components/Restaurants'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/deliveries',
       name: 'deliveries',
       component: Deliveries
+    },
+    {
+      path: '/restaurants',
+      name: 'restaurants',
+      component: Restaurants
     }
   ]
 })

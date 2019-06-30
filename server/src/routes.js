@@ -25,5 +25,9 @@ module.exports = (app) => {
     RestaurantsController.insert)
   app.get('/restaurant',
     RestaurantsController.index)
+  app.put('/restaurant/:restaurantId',
+    RestaurantsController.update);
+  app.delete('/restaurant/:restaurantId',
+    RestaurantsController.delete);
 
 }

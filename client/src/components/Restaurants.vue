@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <router-link to="/restaurants" tag="v-btn">
-      <a>Go to Restaurants</a>
+    <router-link to="/deliveries" tag="v-btn">
+      <a>Go to Deliveries</a>
     </router-link>
     <v-app id="deliveryHelper">
       <v-toolbar flat color="white">
-        <v-toolbar-title>My Deliveries</v-toolbar-title>
+        <v-toolbar-title>My Restaurants</v-toolbar-title>
         <v-divider vertical inset class="mx-2" />
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="800px">
@@ -21,6 +21,13 @@
             <v-card-text>
               <v-container grid-list-md>
                 <v-layout wrap>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      v-model="editedItem.name"
+                      :rules="[validationRules.required]"
+                      label="Name"
+                    ></v-text-field>
+                  </v-flex>
                   <v-flex xs12 sm6 md4>
                     <v-text-field
                       v-model="editedItem.address"
@@ -39,23 +46,6 @@
                       ]"
                       label="Phone Number"
                     ></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-select
-                      label="Restaurant Address"
-                      v-model="editedItemRestaurantAddress"
-                      :rules="[validationRules.required]"
-                      :items="restaurantAddressOptions"
-                    >
-                    </v-select>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-select
-                      v-model="editedItemStatusAsString"
-                      :rules="[validationRules.required]"
-                      :items="statusOptions"
-                      label="Status"
-                    ></v-select>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -77,14 +67,11 @@
         class="elevation-1"
       >
         <template slot="items" slot-scope="props">
-          <tr v-bind:style="selectColors(props.item.status)">
+          <tr>
             <td class="text-xs-right">{{ props.item.id }}</td>
+            <td class="text-xs-right">{{ props.item.name }}</td>
             <td class="text-xs-right">{{ props.item.address }}</td>
             <td class="text-xs-right">{{ props.item.phoneNumber }}</td>
-            <td class="text-xs-right">{{ props.item.Restaurant.address }}</td>
-            <td class="text-xs-right">
-              {{ transformStatusIdToString(props.item.status) }}
-            </td>
             <td class="justify-center layout px-0">
               <v-icon center small class="mr-2" @click="editItem(props.item)">
                 edit
@@ -101,42 +88,30 @@
 </template>
 
 <script>
-import DeliveriesService from "@/services/DeliveriesService";
+import RestaurantsService from "@/services/RestaurantsService";
 export default {
   data() {
     return {
       mainHeaders: [
         { text: "Id", value: "id", width: "50" },
+        { text: "Name", value: "name", align: "right" },
         { text: "Address", value: "address", align: "right" },
         { text: "Phone Number", value: "phoneNumber", align: "right" },
-        {
-          text: "Restaurant Address",
-          value: "restaurantAddress",
-          align: "right"
-        },
-        { text: "Status", value: "status", align: "center" },
         { text: "Actions", value: "name", align: "left", sortable: false }
       ],
       mainItems: [],
-      restaurants: [],
       dialog: false,
       editedIndex: -1,
       editedItem: {
+        name: "",
         address: "",
-        phoneNumber: "",
-        RestaurantId: -1,
-        status: -1
+        phoneNumber: ""
       },
       defaultItem: {
+        name: "",
         address: "",
-        phoneNumber: "",
-        RestaurantId: -1,
-        status: -1
+        phoneNumber: ""
       },
-      editedItemRestaurantAddress: "",
-      editedItemStatusAsString: "",
-
-      statusOptions: ["Inregistrata", "In primire", "In livrare", "Livrata"],
 
       validationRules: {
         required: value => !!value || "Required.",
@@ -153,10 +128,6 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
-    },
-
-    restaurantAddressOptions() {
-      return this.restaurants.map(r => r.address);
     }
   },
 
@@ -167,63 +138,27 @@ export default {
   },
 
   async mounted() {
-    this.mainItems = (await DeliveriesService.getAllDeliveries()).data;
-    this.restaurants = (await DeliveriesService.getAllRestaurants()).data;
+    this.mainItems = (await RestaurantsService.getAllRestaurants()).data;
   },
 
   methods: {
     refreshTable() {
       setTimeout(async () => {
-        this.mainItems = (await DeliveriesService.getAllDeliveries()).data;
+        this.mainItems = (await RestaurantsService.getAllRestaurants()).data;
       }, 200);
-    },
-
-    selectColors(status) {
-      var bC = "backgroundColor: ";
-      if (status === 0) return bC + "#EF9A9A";
-      // red lighten-3
-      else if (status === 1) return bC + "#7986CB";
-      // indigo lighten-2
-      return bC + "transparent";
-    },
-
-    transformStatusIdToString(statusId) {
-      return this.statusOptions[statusId];
-    },
-
-    transformStatusStringToId(statusString) {
-      return this.statusOptions.indexOf(statusString);
-    },
-
-    findRestaurantAddressById(restaurantId) {
-      return this.restaurants.filter(
-        restaurant => restaurant.id === restaurantId
-      )[0].address;
-    },
-
-    findRestaurantIdByAddress(restaurantAddress) {
-      return this.restaurants.filter(
-        restaurant => restaurant.address === restaurantAddress
-      )[0].id;
     },
 
     editItem(item) {
       this.editedIndex = this.mainItems.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.editedItemRestaurantAddress = this.findRestaurantAddressById(
-        item.RestaurantId
-      );
-      this.editedItemStatusAsString = this.transformStatusIdToString(
-        this.editedItem.status
-      );
       this.dialog = true;
     },
 
     deleteItem(item) {
-      const deliveryId = item.id;
+      const restaurantId = item.id;
       const result = confirm("Are you sure you want to delete this item?");
       if (result) {
-        DeliveriesService.deleteDelivery(deliveryId);
+        RestaurantsService.deleteRestaurant(restaurantId);
         this.refreshTable();
       }
     },
@@ -237,18 +172,11 @@ export default {
     },
 
     save() {
-      this.editedItem.RestaurantId = this.findRestaurantIdByAddress(
-        this.editedItemRestaurantAddress
-      );
-      this.editedItem.status = this.transformStatusStringToId(
-        this.editedItemStatusAsString
-      );
-
       if (this.editedIndex > -1) {
         var mainItemId = this.mainItems[this.editedIndex].id;
-        DeliveriesService.updateDelivery(mainItemId, this.editedItem);
+        RestaurantsService.updateRestaurant(mainItemId, this.editedItem);
       } else {
-        DeliveriesService.insertDelivery(this.editedItem);
+        RestaurantsService.insertRestaurant(this.editedItem);
       }
       this.close();
       this.refreshTable();
