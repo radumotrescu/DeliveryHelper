@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <router-link to="/restaurants" tag="v-btn">
+    <v-btn href='/restaurants'>
       <a>Go to Restaurants</a>
-    </router-link>
+    </v-btn>
     <v-app id="deliveryHelper">
       <v-toolbar flat color="white">
         <v-toolbar-title>My Deliveries</v-toolbar-title>
