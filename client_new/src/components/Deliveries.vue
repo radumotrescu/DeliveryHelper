@@ -111,7 +111,7 @@ export default {
         { text: "Phone Number", value: "phoneNumber", align: "right" },
         {
           text: "Restaurant Address",
-          value: "restaurantAddress",
+          value: "Restaurant.address",
           align: "right"
         },
         { text: "Status", value: "status", align: "center" },
